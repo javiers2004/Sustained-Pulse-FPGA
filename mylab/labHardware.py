@@ -113,14 +113,6 @@ for pin in pins2:
     except Exception as e:
         print(f"Error: {e}")
     
-
-
-
-
- 
-
-
-
 def clean_resources():
     global ssh
     """
@@ -228,6 +220,42 @@ def slider_value(number):
 def get_microcontroller_state():
     return redis.get('hardware:microcontroller')
 
+def loadGit(file):
+    """
+    Carga un archivo .bit en la FPGA utilizando openFPGALoader.
+
+    :param file: Objeto FileStorage que hace referencia a un archivo almacenado en la carpeta /uploads.
+    """
+    try:
+        upload_folder = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'uploads')
+        bit_file_path = os.path.join(upload_folder, file.filename)
+
+        print("aqui" + bit_file_path)
+
+        if not os.path.isfile(bit_file_path):
+            raise FileNotFoundError(f"El archivo {bit_file_path} no existe en la carpeta /uploads.")
+
+        print(f"Cargando el archivo .bit en la FPGA desde {bit_file_path}...")
+
+        command = f"sudo openFPGALoader -b basys3 {bit_file_path}"
+
+        stdin, stdout, stderr = ssh.exec_command(command)
+
+        stdout_output = stdout.read().decode()
+        stderr_output = stderr.read().decode()
+
+        if stdout_output:
+            print("Output:")
+            print(stdout_output)
+        
+        if stderr_output:
+            print("Errores:")
+            print(stderr_output)
+
+    except Exception as e:
+        print(f"Error al cargar el archivo en la FPGA: {str(e)}")
+
+
 @weblab.task()
 def program_device(code):
 
@@ -273,6 +301,10 @@ def program_device(code):
     print("Yay! the robot has been programmed! Now you can retrieve the result ")
     print("************************************************************************")
     redis.set('hardware:microcontroller', 'programmed')
+
+
+
+
 
     return {
         'success': True

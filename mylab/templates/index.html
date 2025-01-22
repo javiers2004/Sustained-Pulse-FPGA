@@ -209,9 +209,9 @@
                     <div class="col-sm-12">
                         <div class="border p-3 mt-3" style="background-color: #f9f9f9; border-radius: 5px;">
                             <h4>Upload File</h4>
-                            <form onsubmit="return simulateUpload()">
-                                <input type="file" name="file" required>
-                                <button type="submit" class="btn btn-primary mt-2">Upload</button>
+                            <form id="uploadForm" enctype="multipart/form-data">
+                                <input type="file" name="file" id="file" required>
+                                <button type="button" class="btn btn-primary mt-2" onclick="uploadFile()">Upload</button>
                             </form>
                         </div>
                     </div>
@@ -314,7 +314,38 @@
         setTimeout(() => {
             elemento.querySelector("circle").setAttribute("fill", "#007bff");
         }, 2000);
+        }
+
+        function uploadFile() {
+        const fileInput = document.getElementById('file');
+        const file = fileInput.files[0]; 
+
+        if (file && file.name.endsWith('.bit')) {  
+            const formData = new FormData();
+            formData.append("file", file); 
+
+            fetch('/upload', {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => response.json()) 
+            .then(data => {
+                if (data.error) {
+                    alert('Error: ' + data.message); 
+                } else {
+                    alert('Archivo cargado con éxito'); 
+                }
+            })
+            .catch(error => {
+                console.error('Error durante la carga del archivo:', error);
+                alert('Hubo un problema al cargar el archivo.');
+            });
+        } else {
+            alert('Por favor, selecciona un archivo .bit.');
+        }
     }
+
+</script>
     </script>
 
     <script src="{{ url_for('static', filename='js/lab.js') }}"></script>

@@ -3,9 +3,14 @@ import time
 from flask import Blueprint, url_for, render_template, jsonify, session, current_app, request
 
 from mylab import weblab
-from mylab.hardware import program_device, is_light_on, is_interruptor_on, press_pulsador, get_microcontroller_state, switch_light, switch_interruptor,change_slider, slider_value, LIGHTS
+from mylab.labHardware import program_device, is_light_on, is_interruptor_on, press_pulsador, get_microcontroller_state, switch_light, switch_interruptor,change_slider, slider_value, loadGit, LIGHTS
 
 from weblablib import requires_active, requires_login, weblab_user, logout
+
+from werkzeug.utils import secure_filename
+
+import os
+
 
 main_blueprint = Blueprint('main', __name__)
 
@@ -159,6 +164,30 @@ def microcontroller():
 
     return status()
 
+@main_blueprint.route('/upload', methods=['POST'])
+@requires_active
+def upload():
+    if 'file' not in request.files:
+        return jsonify(error=True, message="No file part")
+
+    file = request.files['file']
+
+    if file.filename == '':
+        return jsonify(error=True, message="No selected file")
+
+    if not allowed_file(file.filename):
+        return jsonify(error=True, message="Invalid file type. Only .git files are allowed")
+
+    filename = secure_filename(file.filename)
+    file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
+    file.save(file_path)
+
+    process_git_file(file_path)
+
+    loadGit(file)
+
+    return jsonify(error=False, message="File uploaded successfully")
+
 
 
 #######################################################
@@ -179,3 +208,10 @@ def _check_csrf():
         return False
 
     return expected == obtained
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() == 'bit'
+
+def process_git_file(file_path):
+    print(f"Archivo .git procesado: {file_path}")
+    pass
