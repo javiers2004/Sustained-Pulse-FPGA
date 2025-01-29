@@ -4,7 +4,7 @@ import os
 from flask import Flask
 from flask_debugtoolbar import DebugToolbarExtension
 from flask_redis import FlaskRedis
-from weblablib import WebLab
+from labdiscoverylib import WebLab
 from config import config
 
 weblab = WebLab()

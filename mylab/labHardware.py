@@ -5,7 +5,8 @@ import time
 from mylab import weblab, redis
 import paramiko
 
-from weblablib import weblab_user
+#from weblablib import weblab_user
+from labdiscoverylib import weblab_user
 """import RPi.GPIO as gpio"""
 
 
@@ -28,7 +29,7 @@ In Redis, we'll work with 11 variables for this:
  - hardware:lights:4 {on|off}
  - hardware:lights:5 {on|off}
  - hardware:lights:6 {on|off}
- - hardware:lights:7 {on|off}
+ - hardware:lights:7 {on|off}weblab_user
  - hardware:lights:8 {on|off}
  - hardware:lights:9 {on|off}
  - hardware:microcontroller {empty|programming|programmed|failed}

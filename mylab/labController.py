@@ -5,7 +5,7 @@ from flask import Blueprint, url_for, render_template, jsonify, session, current
 from mylab import weblab
 from mylab.labHardware import program_device, is_light_on, is_interruptor_on, press_pulsador, get_microcontroller_state, switch_light, switch_interruptor,change_slider, slider_value, loadGit, LIGHTS
 
-from weblablib import requires_active, requires_login, weblab_user, logout
+from labdiscoverylib import requires_active, requires_login, weblab_user, logout
 
 from werkzeug.utils import secure_filename
 
