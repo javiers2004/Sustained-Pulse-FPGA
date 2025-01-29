@@ -30,17 +30,12 @@ function pulsar(number) {
     //return false;
 }
 
+
 function turnOn(number) {
     modificarInterruptor(number, true);
     //return false;
 }
 
-function pressButton(number) {
-    $.post(LIGHT_URL.replace("LIGHT", number), {
-        csrf: CSRF,
-        state: true
-    }).done(parseStatus);
-}
 
 function turnOff(number) {
     modificarInterruptor(number, false);
@@ -61,12 +56,6 @@ function modificarInterruptor(number, state) {
     }).done(parseStatus);
 }
 
-function turnLight(number, state) {
-    $.post(LIGHT_URL.replace("LIGHT", number), {
-        csrf: CSRF,
-        state: state
-    }).done(parseStatus);
-}
 
 function sendProgram(code) {
     $.post(MICROCONTROLLER_URL, {
@@ -74,6 +63,7 @@ function sendProgram(code) {
         code: code
     }).done(parseStatus);
 }
+
 
 function logout() {
     $.post(LOGOUT_URL, {
@@ -84,6 +74,7 @@ function logout() {
 }
 
 var HIDE_MESSAGES_BOX = null;
+
 
 function parseStatus(newStatus) {
     if (newStatus.error == false) {

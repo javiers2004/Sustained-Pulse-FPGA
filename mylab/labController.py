@@ -3,7 +3,7 @@ import time
 from flask import Blueprint, url_for, render_template, jsonify, session, current_app, request
 
 from mylab import weblab
-from mylab.labHardware import program_device, is_light_on, is_interruptor_on, press_pulsador, get_microcontroller_state, switch_light, switch_interruptor,change_slider, slider_value, loadGit, LIGHTS
+from mylab.labHardware import program_device, is_interruptor_on, press_pulsador, get_microcontroller_state, switch_interruptor,change_slider, slider_value, loadGit, INTERRUPTORS, PULSATORS, SLIDERS
 
 from labdiscoverylib import requires_active, requires_login, weblab_user, logout
 
@@ -14,13 +14,13 @@ import os
 
 main_blueprint = Blueprint('main', __name__)
 
+
 @weblab.initial_url
 def initial_url():
     """
     Where do we send the user when a new user comes?
     """
     return url_for('main.index')
-
 
 
 @main_blueprint.route('/')
@@ -33,22 +33,23 @@ def index():
 
     return render_template("index.html")
 
+
 @main_blueprint.route('/status')
 @requires_active
 def status():
     "Return the status of the board"
-    lights = {}
     microcontroller = {}
     interruptors = {}
+    pulsators = {}
     sliders = {}
 
-    for light in range(LIGHTS):
-        lights['light-{}'.format(light + 1)] = is_light_on(light)
-
-    for interruptor in range(8):
+    for interruptor in range(INTERRUPTORS):
         interruptors['interruptor-{}'.format(interruptor + 1)] = is_interruptor_on(interruptor)
 
-    for slider in range(2):
+    for pulsator in range(PULSATORS):
+        pulsators['pulsator-{}'.format(pulsator + 1)] = 1
+
+    for slider in range(SLIDERS):
         sliders['slider-{}'.format(slider + 1)] = slider_value(slider)
 
     microcontroller = get_microcontroller_state()
@@ -57,7 +58,8 @@ def status():
     if task:
         current_app.logger.debug("Current programming task status: %s (error: %s; result: %s)", task.status, task.error, task.result)
 
-    return jsonify(error=False, lights=lights, interruptors=interruptors, sliders=sliders, microcontroller=microcontroller, time_left=weblab_user.time_left)
+    return jsonify(error=False, interruptors=interruptors, pulsators=pulsators, sliders=sliders, microcontroller=microcontroller, time_left=weblab_user.time_left)
+
 
 @main_blueprint.route('/logout', methods=['POST'])
 @requires_login
@@ -67,77 +69,56 @@ def logout_view():
 
     if weblab_user.active:
         logout()
+    # Turn on 
 
     return jsonify(error=False)
 
-@main_blueprint.route('/button/<int:number>', methods=['POST'])
-@requires_active
-def light(number):
-    # light number is 1..10
-    internal_number = number - 1
-
-    # Check that number is valid
-    if internal_number not in range(LIGHTS):
-        return jsonify(error=True, message="Invalid light number")
-
-    if not _check_csrf():
-        return jsonify(error=True, message="Invalid CSRF")
-
-    # Turn on light
-    switch_light(internal_number, request.values.get('state', 'false') == 'true')
-    return status()
 
 @main_blueprint.route('/interruptor/<int:number>', methods=['POST'])
 @requires_active
 def interruptor(number):
-    # light number is 1..10
     internal_number = number - 1  
 
-    # Check that number is valid
-    if internal_number not in range(8):
-        return jsonify(error=True, message="Invalid light number")
+    if internal_number not in range(INTERRUPTORS):
+        return jsonify(error=True, message="Invalid interruptor number")
 
     if not _check_csrf():
         return jsonify(error=True, message="Invalid CSRF")
 
-    # Turn on light
     switch_interruptor(internal_number, request.values.get('state', 'false') == 'true')
     return status()
+
 
 @main_blueprint.route('/slider/<int:number>', methods=['POST'])
 @requires_active
 def slider(number):
-    # light number is 1..10
     internal_number = number - 1  
 
-    # Check that number is valid
-    if internal_number not in range(2):
-        return jsonify(error=True, message="Invalid light number")
+    if internal_number not in range(SLIDERS):
+        return jsonify(error=True, message="Invalid slider number")
 
     if not _check_csrf():
         return jsonify(error=True, message="Invalid CSRF")
 
-    # Turn on light
     change_slider(internal_number, request.values.get('value'))
     return status()
+
 
 @main_blueprint.route('/pulsador/<int:number>', methods=['POST'])
 @requires_active
 def pulsador(number):
-    # light number is 1..10
     internal_number = number - 1  
 
-    # Check that number is valid
-    if internal_number not in range(6):
-        return jsonify(error=True, message="Invalid light number")
+    if internal_number not in range(PULSATORS):
+        return jsonify(error=True, message="Invalid pulsator number")
 
     if not _check_csrf():
         return jsonify(error=True, message="Invalid CSRF")
 
-    # Turn on light
     press_pulsador(internal_number)
 
     return status()
+
 
 @main_blueprint.route('/microcontroller', methods=['POST'])
 @requires_active
@@ -164,6 +145,7 @@ def microcontroller():
 
     return status()
 
+
 @main_blueprint.route('/upload', methods=['POST'])
 @requires_active
 def upload():
@@ -187,7 +169,6 @@ def upload():
     loadGit(file)
 
     return jsonify(error=False, message="File uploaded successfully")
-
 
 
 #######################################################

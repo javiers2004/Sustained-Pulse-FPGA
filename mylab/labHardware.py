@@ -35,7 +35,10 @@ In Redis, we'll work with 11 variables for this:
  - hardware:microcontroller {empty|programming|programmed|failed}
 """
 
-LIGHTS=10
+INTERRUPTORS =10
+PULSATORS = 4
+SLIDERS = 2
+
 
 ssh = None
 
@@ -50,11 +53,11 @@ def start(client_data, server_data):
     print("************************************************************************")
 
     # Inicialización de hardware en Redis
-    for interruptor in range(8):
+    for interruptor in range(INTERRUPTORS):
         redis.set(f'hardware:interruptors:{interruptor}', 'off')
-    for light in range(LIGHTS):
-        redis.set(f'hardware:lights:{light}', 'off')
-    for slider in range(2):
+    for pulsator in range(PULSATORS):
+        redis.set(f'hardware:pulsator:{pulsator}', 'off')
+    for slider in range(SLIDERS):
         redis.set(f'hardware:sliders:{slider}', 50)
     redis.set('hardware:microcontroller', 'empty')
 
@@ -114,6 +117,7 @@ for pin in pins2:
     except Exception as e:
         print(f"Error: {e}")
     
+
 def clean_resources():
     global ssh
     """
@@ -137,18 +141,7 @@ gpio.cleanup()
         print(f"Error: {e}")
 
 
-def switch_light(number, state):
-    if state:
-        print("************************************************************************")
-        print("  User {} (local identifier: {})".format(weblab_user.username, weblab_user.data['local_identifier']))
-        print("  Button {} has been pressed!                                  ".format(number))
-        print("************************************************************************")
-        redis.set('hardware:lights:{}'.format(number), 'off')
-    else:
-        print("************************************************************************")
-        print("  Imagine that light {} is turning off!                                 ".format(number))
-        print("************************************************************************")
-        redis.set('hardware:lights:{}'.format(number), 'on')
+
 
 def switch_interruptor(number, state):
     global ssh
@@ -194,6 +187,7 @@ gpio.output({}, 0)
         except Exception as e:
             print(f"Error: {e}")
 
+
 def change_slider(number, value):
     print("************************************************************************")
     print("  User {} (local identifier: {})".format(weblab_user.username, weblab_user.data['local_identifier']))
@@ -207,10 +201,8 @@ def press_pulsador(number):
     print("  User {} (local identifier: {})".format(weblab_user.username, weblab_user.data['local_identifier']))
     print("  Pulsator {} has been turned on!                                  ".format(number + 1))
     print("************************************************************************")
+    redis.set('hardware:pulsator:{}'.format(number), 1)
     
-
-def is_light_on(number):
-    return redis.get('hardware:lights:{}'.format(number)) == 'on'
 
 def is_interruptor_on(number):
     return redis.get('hardware:interruptors:{}'.format(number)) == 'on'

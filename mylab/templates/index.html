@@ -233,7 +233,6 @@
     {{ weblab_poll_script() }}
 
     <script>
-        var LIGHT_URL = "{{ url_for('.light', number=12345) }}".replace("12345", "LIGHT");
         var INTERRUPTOR_URL = "{{ url_for('.interruptor', number=12345) }}".replace("12345", "INTERRUPTOR");
         var PULSADOR_URL = "{{ url_for('.pulsador', number=12345) }}".replace("12345", "PULSADOR");
         var SLIDER_URL = "{{ url_for('.slider', number=12345) }}".replace("12345", "SLIDER");
