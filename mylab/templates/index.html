@@ -118,10 +118,10 @@
                     <div class="col-sm-3 text-center mb-3">
                         <h5>{{ interruptor }}</h5>
                         <a href="javascript:turnOn({{ interruptor }})">
-                            <img width="50px" id="interruptor_{{ interruptor }}_on" src="{{ url_for('static', filename='js/video/unnamed.jpg') }}">
+                            <img width="50px" id="interruptor_{{ interruptor }}_off" src="{{ url_for('static', filename='js/video/unnamed.jpg') }}">
                         </a>
                         <a href="javascript:turnOff({{ interruptor }})">
-                            <img width="50px" id="interruptor_{{ interruptor }}_off" src="{{ url_for('static', filename='js/video/unnamed2.jpg') }}">
+                            <img width="50px" id="interruptor_{{ interruptor }}_on" src="{{ url_for('static', filename='js/video/unnamed2.jpg') }}">
                         </a>
                     </div>
                     {% endfor %}
@@ -187,23 +187,7 @@
                     </div>
                 </div>
 
-                <br>
-                <div class="row">
-                    <div class="col-sm-12">
-                        <div class="border p-3" style="background-color: #f9f9f9; border-radius: 5px;">
-                            Microcontroller status: <span id="microcontroller_status"></span>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-sm-12">
-                        <div class="border p-3 mt-3" style="background-color: #f9f9f9; border-radius: 5px;">
-                            <a class="btn btn-success" href="javascript:sendProgram('good')">Send good program</a>
-                            <br><br>
-                            <a class="btn btn-danger" href="javascript:sendProgram('division-by-zero')">Send bad program</a>
-                        </div>
-                    </div>
-                </div>
+
 
                 <div class="row">
                     <div class="col-sm-12">
