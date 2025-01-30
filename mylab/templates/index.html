@@ -117,10 +117,10 @@
                     {% for interruptor in range(1, 9) %}
                     <div class="col-sm-3 text-center mb-3">
                         <h5>{{ interruptor }}</h5>
-                        <a href="javascript:turnOn({{ interruptor }})">
+                        <a href="javascript:turnOff({{ interruptor }})">
                             <img width="50px" id="interruptor_{{ interruptor }}_off" src="{{ url_for('static', filename='js/video/unnamed.jpg') }}">
                         </a>
-                        <a href="javascript:turnOff({{ interruptor }})">
+                        <a href="javascript:turnOn({{ interruptor }})">
                             <img width="50px" id="interruptor_{{ interruptor }}_on" src="{{ url_for('static', filename='js/video/unnamed2.jpg') }}">
                         </a>
                     </div>
