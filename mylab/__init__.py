@@ -28,7 +28,7 @@ def create_app(config_name):
 
     app.config.update({
         'SECRET_KEY': '\x18\xf2\xb0\x8d\x02\xef\xef\xf7@&H\xad\xb6\x91O\t,Y\xd4\\i\x15L)\x92\x8f\x14\x82\x86\xd5=&',
-        'WEBLAB_USERNAME': 'weblabdeusto',
+        'WEBLAB_USERNAME': 'weblabdeusto2',
         'WEBLAB_PASSWORD': 'password',
         'UPLOAD_FOLDER': os.path.join(os.path.abspath(os.path.dirname(__file__)), 'uploads')
     })
